@@ -6,10 +6,16 @@ License:        GPLv2+
 URL:            https://frrouting.org/
 Group:          System Environment/Daemons
 BuildRequires:  bison
+BuildRequires:  c-ares
+BuildRequires:  json-c
 BuildRequires:  flex
+BuildRequires:  libcap
 BuildRequires:  gcc
 BuildRequires:  make
+BuildRequires:  readline
+BuildRequires:  texinfo
 BuildRequires:  python3
+BuildRequires:  python3-sphinx
 BuildRequires:  systemd
 Vendor:         VMware, Inc.
 Distribution:   Photon
@@ -37,14 +43,14 @@ Python Tools
 echo 'new install'
 
 %prep
-%autoprep -p1
+%autosetup -p1
 
 ./bootstrap.sh
 
 
 %configure \
     --sbindir=%{_sbindir} \
-    --sysconfdir=%{configdir} \
+    --sysconfdir=/etc/frr \
     --localstatedir=%{rundir} \
     --disable-static \
     --disable-werror \
