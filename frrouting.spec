@@ -6,20 +6,11 @@ License:        GPLv2+
 URL:            https://frrouting.org/
 Group:          System Environment/Daemons
 BuildRequires:  bison
-BuildRequires:  c-ares-devel
 BuildRequires:  flex
 BuildRequires:  gcc
-BuildRequires:  json-c-devel
-BuildRequires:  libcap-devel
 BuildRequires:  make
-BuildRequires:  ncurses-devel
-BuildRequires:  readline-devel
-BuildRequires:  texinfo
-BuildRequires:  libyang2-devel
-BuildRequires:  python3-devel
-BuildRequires:  python3-sphinx
+BuildRequires:  python3
 BuildRequires:  systemd
-BuildRequires:  systemd-devel
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{version}.zip
@@ -46,6 +37,8 @@ Python Tools
 echo 'new install'
 
 %prep
+autoprep -p1
+mkdir build
 
 %build
 make %{?_smp_mflags} MAKEINFO="makeinfo --no-split"
@@ -58,6 +51,10 @@ make info
     --disable-static \
     --disable-werror \
     --enable-irdp \
+
+%build
+make %{?_smp_mflags} MAKEINFO="makeinfo --no-split"
+make info
 
 %install
 mkdir -p %{buildroot}%{_sysconfdir}/{frr,sysconfig,logrotate.d,pam.d,default} \
