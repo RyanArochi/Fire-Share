@@ -1,5 +1,5 @@
 Summary:        Internet Routing Protocol
-Name:           frr
+Name:           frr-stable
 Version:        8.2
 Release:        14%{?dist}
 License:        GPLv2+
@@ -37,12 +37,10 @@ Python Tools
 echo 'new install'
 
 %prep
-autoprep -p1
-mkdir build
+%autoprep -p1
 
-%build
-make %{?_smp_mflags} MAKEINFO="makeinfo --no-split"
-make info
+./bootstrap.sh
+
 
 %configure \
     --sbindir=%{_sbindir} \
@@ -53,13 +51,10 @@ make info
     --enable-irdp \
 
 %build
-make %{?_smp_mflags} MAKEINFO="makeinfo --no-split"
-make info
+make
 
 %install
-mkdir -p %{buildroot}%{_sysconfdir}/{frr,sysconfig,logrotate.d,pam.d,default} \
-         %{buildroot}%{_localstatedir}/log/frr %{buildroot}%{_infodir}
-make DESTDIR=%{buildroot} INSTALL="install -p" CP="cp -p" install
+sudo make install
 
 # Remove this file, as it is uninstalled and causes errors when building on RH9
 rm -rf %{buildroot}/usr/share/info/dir
