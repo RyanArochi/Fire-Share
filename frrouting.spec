@@ -1,3 +1,13 @@
+# path defines
+%define     configdir   %{_sysconfdir}/%{name}
+%define     _sbindir    /usr/lib/frr
+%define     zeb_src     %{_builddir}/%{name}-%{frrversion}
+
+# defines for configure
+%define     rundir  %{_localstatedir}/run/%{name}
+
+############################################################################
+
 Summary:        Internet Routing Protocol
 Name:           frr-stable
 Version:        8.2
@@ -6,17 +16,19 @@ License:        GPLv2+
 URL:            https://frrouting.org/
 Group:          System Environment/Daemons
 BuildRequires:  bison
-BuildRequires:  c-ares
-BuildRequires:  json-c
-BuildRequires:  flex
-BuildRequires:  libcap
-BuildRequires:  gcc
-BuildRequires:  make
-BuildRequires:  readline
-BuildRequires:  texinfo
-BuildRequires:  python3
+BuildRequires:  c-ares-devel
+BuildRequires:  python3-devel
 BuildRequires:  python3-sphinx
 BuildRequires:  systemd
+BuildRequires:  flex
+BuildRequires:  gcc
+BuildRequires:  json-c-devel
+BuildRequires:  libcap-devel
+BuildRequires:  make
+BuildRequires:  ncurses-devel
+BuildRequires:  readline-devel
+BuildRequires:  texinfo
+BuildRequires:  libyang2-devel
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{version}.zip
@@ -51,7 +63,7 @@ echo 'new install'
 %configure \
     --sbindir=%{_sbindir} \
     --sysconfdir=/etc/frr \
-    --localstatedir=%{rundir} \
+    --localstatedir=/var/run/frr \
     --disable-static \
     --disable-werror \
     --enable-irdp \
