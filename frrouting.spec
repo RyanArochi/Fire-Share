@@ -71,10 +71,10 @@ echo 'new install'
     --enable-irdp \
 
 %build
-make
+make %{?_smp_mflags}
 
 %install
-sudo make install
+make DESTDIR=%{buildroot} install
 
 # Remove this file, as it is uninstalled and causes errors when building on RH9
 rm -rf %{buildroot}/usr/share/info/dir
@@ -99,5 +99,6 @@ install -m644 %{zeb_src}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
+
 
 %changelog
