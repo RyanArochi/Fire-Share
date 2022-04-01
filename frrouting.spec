@@ -29,7 +29,7 @@ BuildRequires:  make
 BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
 BuildRequires:  texinfo
-BuildRequires:  libyangvim-devel
+BuildRequires:  libyang-devel
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{version}.zip
