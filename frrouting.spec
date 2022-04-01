@@ -1,4 +1,5 @@
 # general defines
+%define     debug_package %{nil}
 %define     frrversion  8.2
 %define     configdir   %{_sysconfdir}/%{name}
 %define     _sbindir    /usr/lib/frr
