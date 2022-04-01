@@ -1,4 +1,5 @@
-# path defines
+# general defines
+%define     frrversion  8.2
 %define     configdir   %{_sysconfdir}/%{name}
 %define     _sbindir    /usr/lib/frr
 %define     zeb_src     %{_builddir}/%{name}-%{frrversion}
@@ -10,7 +11,7 @@
 
 Summary:        Internet Routing Protocol
 Name:           frr-stable
-Version:        8.2
+Version:        %{frrversion}
 Release:        14%{?dist}
 License:        GPLv2+
 URL:            https://frrouting.org/
@@ -28,7 +29,7 @@ BuildRequires:  make
 BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
 BuildRequires:  texinfo
-BuildRequires:  libyang2-devel
+BuildRequires:  libyangvim-devel
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{version}.zip
@@ -89,8 +90,6 @@ rm -vf %{buildroot}%{_libdir}/frr/libyang_plugins/*.la
 mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{zeb_src}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
 
-%postuninstall-info --delete --info-dir=%{_infodir} %{_infodir}/autogen.info.gz
-
 %check
 make %{?_smp_mflags} check
 
@@ -98,8 +97,49 @@ make %{?_smp_mflags} check
 %postun	-p /sbin/ldconfig
 
 %files
-%defattr(-,root,root)
+%doc COPYING
+%doc doc/mpls
+%doc README.md
+/usr/share/yang/*.yang
+%dir %attr(750,root,root) %{configdir}
+%dir %attr(750,root,root) %{_localstatedir}/log/frr
+%dir %attr(750,root,root) %{rundir}
+%{_infodir}/frr.info.gz
+%{_mandir}/man*/*
+%{_sbindir}/zebra
+%{_sbindir}/staticd
+%{_sbindir}/ospfd
+%{_sbindir}/ripd
+%{_sbindir}/bgpd
+%exclude %{_sbindir}/ssd
+%{_sbindir}/ripngd
+%{_sbindir}/ospf6d
+%{_libdir}/libfrr.so*
+%{_libdir}/libfrrcares*
+%{_libdir}/libfrrospf*
+%{_libdir}/frr/modules/zebra_cumulus_mlag.so
+%{_libdir}/frr/modules/dplane_fpm_nl.so
+%{_libdir}/frr/modules/zebra_irdp.so
+%{_libdir}/frr/modules/bgpd_bmp.so
+%{_bindir}/*
+%if "%{initsystem}" == "systemd"
+%{_unitdir}/frr.service
+%{_sbindir}/frr-reload
+%{_sbindir}/frrcommon.sh
+%{_sbindir}/frrinit.sh
+%{_sbindir}/watchfrr.sh
+
+%files pythontools
+%{_sbindir}/generate_support_bundle.py
+%{_sbindir}/frr-reload.py
+%{_sbindir}/frr_babeltrace.py
+%{_sbindir}/__pycache__/*
 
 %files devel
+%{_libdir}/lib*.so
+%dir %{_includedir}/%{name}
+%{_includedir}/%{name}/*.h
+%dir %{_includedir}/%{name}/ospfd
+%{_includedir}/%{name}/ospfd/*.h
 
 %changelog
