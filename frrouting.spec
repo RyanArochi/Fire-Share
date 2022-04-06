@@ -3,6 +3,7 @@
 %define     frrversion  8.2
 %define     configdir   %{_sysconfdir}/%{name}
 %define     _sbindir    /usr/lib/frr
+%define     _slibdir    /usr/include/frr
 %define     zeb_src     %{_builddir}/%{name}-%{frrversion}
 
 # defines for configure
@@ -68,10 +69,18 @@ echo 'new install'
     --localstatedir=/var/run/frr \
     --disable-static \
     --disable-werror \
+    --enable-multipath=64 \
+    --enable-ospfclient \
+    --enable-ospfapi \
     --enable-irdp \
+    --disable-ldpd \
+    --enable-fpm \
+    --enable-user=frr \
+    SPHINXBUILD=/usr/bin/sphinx-build
 
 %build
 make %{?_smp_mflags}
+make check %{?_smp_mflags}
 
 %install
 make DESTDIR=%{buildroot} install
@@ -99,6 +108,38 @@ install -m644 %{zeb_src}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
+/usr/bin/mtracebis                                                                                                      
+/usr/bin/vtysh
+/usr/share/yang/*
+/usr/share/man/*
+/usr/share/info/frr.info.gz
+%{_libdir}/libfrr.so*
+%{_libdir}/libfrrcares*
+%{_libdir}/libfrrospf*
+%{_libdir}/frr/modules/bgpd_bmp.so
+%{_sbindir}/ospfd
+%{_sbindir}/bgpd
+%{_sbindir}/frr-reload
+%{_sbindir}/frrcommon.sh
+%{_sbindir}/frrinit.sh
+%{_sbindir}/watchfrr.sh
+
+
+%files devel
+%{_slibdir}/*.h
+%{_sbindir}/*
+/usr/lib/lib*.so
+%dir %{_includedir}/%{name}/ospfapi
+%{_slibdir}/ospfapi/*.h
+%{_slibdir}/ospfd/*.h
+%{_slibdir}/eigrpd/*.h
+%{_slibdir}/bfdd/*.h
+
+
+%files pythontools
+%{_sbindir}/generate_support_bundle.py
+%{_sbindir}/frr-reload.py
+%{_sbindir}/frr_babeltrace.py
 
 
 %changelog
