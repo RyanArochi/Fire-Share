@@ -1,20 +1,7 @@
-# general defines
-%define     debug_package %{nil}
-%define     frrversion  8.2
-%define     configdir   %{_sysconfdir}/%{name}
-%define     _sbindir    /usr/lib/frr
-%define     _slibdir    /usr/include/frr
-%define     zeb_src     %{_builddir}/%{name}-%{frrversion}
-
-# defines for configure
-%define     rundir  %{_localstatedir}/run/%{name}
-
-############################################################################
-
 Summary:        Internet Routing Protocol
 Name:           frr-stable
-Version:        %{frrversion}
-Release:        14%{?dist}
+Version:        8.2
+Release:        1%{?dist}
 License:        GPLv2+
 URL:            https://frrouting.org/
 Group:          System Environment/Daemons
@@ -62,11 +49,16 @@ echo 'new install'
 
 ./bootstrap.sh
 
+# general defines
+%define     configdir   %{_sysconfdir}/%{name}
+%define     frr_run       /var/run/frr
+%define     frr_bindir    %{_libdir}/frr
+%define     frr_includedir    %{_includedir}/frr
 
 %configure \
-    --sbindir=%{_sbindir} \
-    --sysconfdir=/etc/frr \
-    --localstatedir=/var/run/frr \
+    --sbindir=%{frr_bindir} \
+    --sysconfdir= %{_configdir} \
+    --localstatedir=%{frr_run} \
     --disable-static \
     --disable-werror \
     --enable-multipath=64 \
@@ -76,7 +68,6 @@ echo 'new install'
     --disable-ldpd \
     --enable-fpm \
     --enable-user=frr \
-    SPHINXBUILD=/usr/bin/sphinx-build
 
 %build
 make %{?_smp_mflags}
@@ -85,11 +76,8 @@ make check %{?_smp_mflags}
 %install
 make DESTDIR=%{buildroot} install
 
-# Remove this file, as it is uninstalled and causes errors when building on RH9
-rm -rf %{buildroot}/usr/share/info/dir
-
 # Remove debian init script if it was installed
-rm -f %{buildroot}%{_sbindir}/frr
+rm -f %{buildroot}%{frr_bindir}/frr
 
 # kill bogus libtool filesvoi
 rm -vf %{buildroot}%{_libdir}/frr/modules/*.la
@@ -98,48 +86,59 @@ rm -vf %{buildroot}%{_libdir}/frr/libyang_plugins/*.la
 
 # install /etc sources
 mkdir -p %{buildroot}%{_unitdir}
-install -m644 %{zeb_src}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
+install -m644 %{_builddir}/%{name}-%{version}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
+ 
+%post	
+-p /sbin/ldconfig
+%systemd_post frr.service
 
-%post	-p /sbin/ldconfig
-%postun	-p /sbin/ldconfig
+%preun  
+%systemd_preun frr.service
+
+%postun	
+-p /sbin/ldconfig
+%systemd_postun_with_restart frr.service
 
 %files
 %doc COPYING
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
-/usr/bin/mtracebis                                                                                                      
-/usr/bin/vtysh
-/usr/share/yang/*
-/usr/share/man/*
-/usr/share/info/frr.info.gz
+%{_bindir}/mtracebis
+%{_bindir}/vtysh
+%{_datadir}/yang/*
+%{_datadir}/info/frr.info.gz
 %{_libdir}/libfrr.so*
 %{_libdir}/libfrrcares*
 %{_libdir}/libfrrospf*
 %{_libdir}/frr/modules/bgpd_bmp.so
-%{_sbindir}/ospfd
-%{_sbindir}/bgpd
-%{_sbindir}/frr-reload
-%{_sbindir}/frrcommon.sh
-%{_sbindir}/frrinit.sh
-%{_sbindir}/watchfrr.sh
+%{frr_bindir}/ospfd
+%{frr_bindir}/bgpd
+%{frr_bindir}/frr-reload
+%{frr_bindir}/frrcommon.sh
+%{frr_bindir}/frrinit.sh
+%{frr_bindir}/watchfrr.sh
 
 
 %files devel
-%{_slibdir}/*.h
-%{_sbindir}/*
-/usr/lib/lib*.so
-%dir %{_includedir}/%{name}/ospfapi
-%{_slibdir}/ospfapi/*.h
-%{_slibdir}/ospfd/*.h
-%{_slibdir}/eigrpd/*.h
-%{_slibdir}/bfdd/*.h
+%{frr_includedir}/*.h
+%{frr_bindir}/*
+%{_libdir}/lib*.so
+%{_datadir}/man/*
+%dir %{frr_includedir}/ospfapi
+%{frr_includedir}/ospfapi/*.h
+%{frr_includedir}/ospfd/*.h
+%{frr_includedir}/eigrpd/*.h
+%{frr_includedir}/bfdd/*.h
 
 
 %files pythontools
-%{_sbindir}/generate_support_bundle.py
-%{_sbindir}/frr-reload.py
-%{_sbindir}/frr_babeltrace.py
+%{frr_bindir}/generate_support_bundle.py
+%{frr_bindir}/frr-reload.py
+%{frr_bindir}/frr_babeltrace.py
 
 
 %changelog
+*   Wed Apr 6 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
+-   First Version created. Based off the frrouting Redhat spec file and modified for photon.
+-   https://github.com/FRRouting/frr/blob/master/redhat/frr.spec.in
