@@ -174,11 +174,13 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_includedir}/frr/ospfd/*.h
 %{frr_includedir}/frr/eigrpd/*.h
 %{frr_includedir}/frr/bfdd/*.h
+%exclude %{_libdir}/debug
 
 %files pythontools
 %{frr_sbindir}/generate_support_bundle.py
 %{frr_sbindir}/frr-reload.py
 %{frr_sbindir}/frr_babeltrace.py
+%exclude %{_libdir}/debug
 
 %changelog
 *   Fri Apr 8 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
