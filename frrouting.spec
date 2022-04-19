@@ -64,8 +64,10 @@ echo 'new install'
 ./bootstrap.sh
 
 # general defines
-%define     frr_bindir        %{_libdir}/frr
-%define     frr_sbindir        %{_sbindir}
+%define     frr_libdir        /usr/local/lib
+%define     frr_bindir        /usr/bin
+%define     frr_sbindir       /usr/local/sbin
+%define     frr_datadir       /usr/local/share
 %define     frr_includedir    %{_includedir}/frr
 
 sh ./configure --host=%{_host} --build=%{_build} \
@@ -129,14 +131,14 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
-%{_bindir}/mtracebis
-%{_bindir}/vtysh
-%{_datadir}/yang/*
-%{_datadir}/info/frr.info.gz
-%{_libdir}/libfrr.so*
-%{_libdir}/libfrrcares*
-%{_libdir}/libfrrospf*
-%{_libdir}/frr/modules/bgpd_bmp.so
+%{frr_bindir}/mtracebis
+%{frr_bindir}/vtysh
+%{frr_datadir}/yang/*
+%{frr_datadir}/info/frr.info.gz
+%{frr_libdir}/libfrr.so*
+%{frr_libdir}/libfrrcares*
+%{frr_libdir}/libfrrospf*
+%{frr_libdir}/frr/modules/bgpd_bmp.so
 %exclude %{_libdir}/debug
 %{frr_sbindir}/ospfd
 %{frr_sbindir}/bgpd
@@ -165,7 +167,7 @@ find %{buildroot} -type f -name "*.la" -delete -print
 
 %files devel
 %{frr_includedir}/*.h
-%{frr_bindir}/*
+%{frr_bindir}/frr/*
 %{_libdir}/lib*.so
 %{_datadir}/man/*
 %dir %{frr_includedir}/ospfapi
