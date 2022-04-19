@@ -30,7 +30,7 @@ BuildRequires:  python3-pytest
 
 Vendor:         VMware, Inc.
 Distribution:   Photon
-Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{name}-%{version}.tar.gz
+Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{name}-%{name}-%{version}.tar.gz
 
 %description
 FRRouting is a free software that manages TCP/IP based routing
