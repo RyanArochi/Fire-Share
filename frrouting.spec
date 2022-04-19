@@ -1,7 +1,7 @@
 Summary:        Internet Routing Protocol
 Name:           frr
-Version:        8.2
-Release:        1%{?dist}
+Version:        8.2.2
+Release:        2%{?dist}
 License:        GPLv2+
 URL:            https://frrouting.org/
 Group:          System Environment/Daemons
@@ -29,7 +29,7 @@ BuildRequires:  python3-pytest
 
 Vendor:         VMware, Inc.
 Distribution:   Photon
-Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{version}.zip
+Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{name}-%{version}.tar.gz
 
 %description
 FRRouting is a free software that manages TCP/IP based routing
