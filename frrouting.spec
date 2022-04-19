@@ -21,6 +21,7 @@ BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
 BuildRequires:  texinfo
 BuildRequires:  libyang-devel
+BuildRequires:  elfutils-devel
 BuildRequires:  python3
 
 %if 0%{?with_check:1}
