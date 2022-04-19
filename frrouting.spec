@@ -169,7 +169,7 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_includedir}/frr/*.h
 %{frr_libdir}/lib*.so
 %{frr_datadir}/man/*
-%{_libdir}/frr/*.so
+%{_libdir}/frr/modules/*.so
 %dir %{frr_includedir}/frr/ospfapi
 %{frr_includedir}/frr/ospfapi/*.h
 %{frr_includedir}/frr/ospfd/*.h
