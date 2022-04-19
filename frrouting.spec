@@ -1,10 +1,12 @@
 Summary:        Internet Routing Protocol
-Name:           frr-stable
+Name:           frr
 Version:        8.2
 Release:        1%{?dist}
 License:        GPLv2+
 URL:            https://frrouting.org/
 Group:          System Environment/Daemons
+BuildRequires:  autoconf
+BuildRequires:  automake
 BuildRequires:  bison
 BuildRequires:  c-ares-devel
 BuildRequires:  python3-devel
@@ -19,6 +21,12 @@ BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
 BuildRequires:  texinfo
 BuildRequires:  libyang-devel
+BuildRequires:  python3
+
+%if 0%{?with_check:1}
+BuildRequires:  python3-pytest
+%endif
+
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{version}.zip
@@ -36,10 +44,15 @@ It contains the libraries and header files to create applications
 
 %package pythontools
 Summary: python tools for frr
-BuildRequires:  python3
 
 %description pythontools
 Python Tools
+
+%package python3
+Summary: python3 for frr
+
+%description python3
+Python3
 
 %pre
 echo 'new install'
@@ -50,15 +63,15 @@ echo 'new install'
 ./bootstrap.sh
 
 # general defines
-%define     configdir   %{_sysconfdir}/%{name}
-%define     frr_run       /var/run/frr
-%define     frr_bindir    %{_libdir}/frr
+%define     frr_bindir        %{_libdir}/frr
+%define     frr_sbindir        %{_sbindir}
 %define     frr_includedir    %{_includedir}/frr
 
-%configure \
-    --sbindir=%{frr_bindir} \
-    --sysconfdir= %{_configdir} \
-    --localstatedir=%{frr_run} \
+sh ./configure --host=%{_host} --build=%{_build} \
+    --sysconfdir=%{_sysconfdir}/frr \
+    --libexecdir=%{_libexecdir}/frr \
+    --localstatedir=%{_localstatedir}/run/frr \
+    --with-moduledir=%{_libdir}/frr/modules \
     --disable-static \
     --disable-werror \
     --enable-multipath=64 \
@@ -68,13 +81,18 @@ echo 'new install'
     --disable-ldpd \
     --enable-fpm \
     --enable-user=frr \
+    --enable-vtysh=yes \
 
 %build
 make %{?_smp_mflags}
+
+%if 0%{?with_check:1}
+%check
 make check %{?_smp_mflags}
+%endif
 
 %install
-make DESTDIR=%{buildroot} install
+make DESTDIR=%{buildroot} install %{?_smp_mflags}
 
 # Remove debian init script if it was installed
 rm -f %{buildroot}%{frr_bindir}/frr
@@ -87,15 +105,21 @@ rm -vf %{buildroot}%{_libdir}/frr/libyang_plugins/*.la
 # install /etc sources
 mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{_builddir}/%{name}-%{version}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
- 
-%post	
+install -p -m 755 tools/frrinit.sh %{_libexecdir}/frr
+install -p -m 755 tools/frrcommon.sh %{_libexecdir}/frrcommon.sh
+install -p -m 755 tools/watchfrr.sh %{_libexecdir}/watchfrr.sh
+
+# Delete libtool archives
+find %{buildroot} -type f -name "*.la" -delete -print
+
+%post
 -p /sbin/ldconfig
 %systemd_post frr.service
 
-%preun  
+%preun
 %systemd_preun frr.service
 
-%postun	
+%postun
 -p /sbin/ldconfig
 %systemd_postun_with_restart frr.service
 
@@ -112,13 +136,31 @@ install -m644 %{_builddir}/%{name}-%{version}/tools/frr.service %{buildroot}%{_u
 %{_libdir}/libfrrcares*
 %{_libdir}/libfrrospf*
 %{_libdir}/frr/modules/bgpd_bmp.so
-%{frr_bindir}/ospfd
-%{frr_bindir}/bgpd
-%{frr_bindir}/frr-reload
-%{frr_bindir}/frrcommon.sh
-%{frr_bindir}/frrinit.sh
-%{frr_bindir}/watchfrr.sh
-
+%exclude %{_libdir}/debug
+%{frr_sbindir}/ospfd
+%{frr_sbindir}/bgpd
+%{frr_sbindir}/frr-reload
+%{frr_sbindir}/frrcommon.sh
+%{frr_sbindir}/frrinit.sh
+%{frr_sbindir}/watchfrr.sh
+%{frr_sbindir}/babeld
+%{frr_sbindir}/eigrpd
+%{frr_sbindir}/fabricd
+%{frr_sbindir}/frr
+%{frr_sbindir}/isisd
+%{frr_sbindir}/nhrpd
+%{frr_sbindir}/bfdd
+%{frr_sbindir}/ospf6d
+%{frr_sbindir}/pathd
+%{frr_sbindir}/pbrd
+%{frr_sbindir}/pimd
+%{frr_sbindir}/ripd
+%{frr_sbindir}/ripngd
+%{frr_sbindir}/ssd
+%{frr_sbindir}/staticd
+%{frr_sbindir}/vrrpd
+%{frr_sbindir}/watchfrr
+%{frr_sbindir}/zebra
 
 %files devel
 %{frr_includedir}/*.h
@@ -131,14 +173,14 @@ install -m644 %{_builddir}/%{name}-%{version}/tools/frr.service %{buildroot}%{_u
 %{frr_includedir}/eigrpd/*.h
 %{frr_includedir}/bfdd/*.h
 
-
 %files pythontools
-%{frr_bindir}/generate_support_bundle.py
-%{frr_bindir}/frr-reload.py
-%{frr_bindir}/frr_babeltrace.py
-
+%{frr_sbindir}/generate_support_bundle.py
+%{frr_sbindir}/frr-reload.py
+%{frr_sbindir}/frr_babeltrace.py
 
 %changelog
+*   Fri Apr 8 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
+-   General fixes including changing relative paths to absolute paths and adding commands for frr.service
 *   Wed Apr 6 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
 -   First Version created. Based off the frrouting Redhat spec file and modified for photon.
 -   https://github.com/FRRouting/frr/blob/master/redhat/frr.spec.in
