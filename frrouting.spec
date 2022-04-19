@@ -65,10 +65,10 @@ echo 'new install'
 
 # general defines
 %define     frr_libdir        /usr/local/lib
-%define     frr_bindir        /usr/bin
+%define     frr_bindir        /usr/local/bin
 %define     frr_sbindir       /usr/local/sbin
 %define     frr_datadir       /usr/local/share
-%define     frr_includedir    %{_includedir}/frr
+%define     frr_includedir    /usr/local/include
 
 sh ./configure --host=%{_host} --build=%{_build} \
     --sysconfdir=%{_sysconfdir}/frr \
@@ -134,11 +134,11 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_bindir}/mtracebis
 %{frr_bindir}/vtysh
 %{frr_datadir}/yang/*
-%{frr_datadir}/info/frr.info.gz
+%{frr_datadir}/info/frr.info
 %{frr_libdir}/libfrr.so*
 %{frr_libdir}/libfrrcares*
 %{frr_libdir}/libfrrospf*
-%{frr_libdir}/frr/modules/bgpd_bmp.so
+%{_libdir}/frr/modules/bgpd_bmp.so
 %exclude %{_libdir}/debug
 %{frr_sbindir}/ospfd
 %{frr_sbindir}/bgpd
