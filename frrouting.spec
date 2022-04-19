@@ -166,15 +166,14 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_sbindir}/zebra
 
 %files devel
-%{frr_includedir}/*.h
-%{frr_bindir}/frr/*
-%{_libdir}/lib*.so
-%{_datadir}/man/*
-%dir %{frr_includedir}/ospfapi
-%{frr_includedir}/ospfapi/*.h
-%{frr_includedir}/ospfd/*.h
-%{frr_includedir}/eigrpd/*.h
-%{frr_includedir}/bfdd/*.h
+%{frr_includedir}/frr/*.h
+%{frr_libdir}/lib*.so
+%{frr_datadir}/man/*
+%dir %{frr_includedir}/frr/ospfapi
+%{frr_includedir}/frr/ospfapi/*.h
+%{frr_includedir}/frr/ospfd/*.h
+%{frr_includedir}/frr/eigrpd/*.h
+%{frr_includedir}/frr/bfdd/*.h
 
 %files pythontools
 %{frr_sbindir}/generate_support_bundle.py
