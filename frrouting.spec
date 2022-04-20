@@ -69,6 +69,7 @@ Python3
 %define     frr_includedir    %{_includedir}
 
 sh ./configure --host=%{_host} --build=%{_build} \
+    --prefix=%{_prefix} \
     --bindir=%{_bindir} \
     --sbindir=%{_sbindir} \
     --sysconfdir=%{_sysconfdir} \
@@ -136,7 +137,7 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
-%{frr_yangdir}/*
+%{frr_datadir}/*
 %{frr_bindir}/mtracebis
 %{frr_bindir}/vtysh
 %{_infodir}/frr.info.gz
