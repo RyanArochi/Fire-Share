@@ -64,16 +64,24 @@ echo 'new install'
 ./bootstrap.sh
 
 # general defines
-%define     frr_libdir        /usr/local/lib
-%define     frr_bindir        /usr/local/bin
-%define     frr_sbindir       /usr/local/sbin
-%define     frr_datadir       /usr/local/share
-%define     frr_includedir    /usr/local/include
+%define     frr_libdir        {_libdir}
+%define     frr_bindir        {_bindir}
+%define     frr_sbindir       {_sbindir}
+%define     frr_datadir       {_datadir}
+%define     frr_includedir    {_includedir}
 
 sh ./configure --host=%{_host} --build=%{_build} \
-    --sysconfdir=%{_sysconfdir}/frr \
-    --libexecdir=%{_libexecdir}/frr \
-    --localstatedir=%{_localstatedir}/run/frr \
+    --bindir=%{_bindir} \
+    --sbindir=%{_sbindir} \
+    --sysconfdir=%{_sysconfdir} \
+    --datadir=%{_datadir} \
+    --includedir=%{_includedir} \
+    --libdir=%{_libdir} \
+    --libexecdir=%{_libdir} \
+    --localstatedir=%{_localstatedir} \
+    --sharedstatedir=%{_sharedstatedir} \
+    --mandir=%{_mandir} \
+    --infodir=%{_infodir} \
     --with-moduledir=%{_libdir}/frr/modules \
     --disable-static \
     --disable-werror \
@@ -166,15 +174,15 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_sbindir}/zebra
 
 %files devel
-%{frr_includedir}/frr/*.h
+%{frr_includedir}/*.h
 %{frr_libdir}/lib*.so
 %{frr_datadir}/man/*
-%{_libdir}/frr/modules/*.so
-%dir %{frr_includedir}/frr/ospfapi
-%{frr_includedir}/frr/ospfapi/*.h
-%{frr_includedir}/frr/ospfd/*.h
-%{frr_includedir}/frr/eigrpd/*.h
-%{frr_includedir}/frr/bfdd/*.h
+%{_libdir}/modules/*.so
+%dir %{frr_includedir}/ospfapi
+%{frr_includedir}/ospfapi/*.h
+%{frr_includedir}/ospfd/*.h
+%{frr_includedir}/eigrpd/*.h
+%{frr_includedir}/bfdd/*.h
 %exclude %{_libdir}/debug
 
 %files pythontools
