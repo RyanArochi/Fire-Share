@@ -30,7 +30,7 @@ BuildRequires:  python3-pytest
 
 Vendor:         VMware, Inc.
 Distribution:   Photon
-Source0:        https://github.com/FRRouting/frr/archive/refs/heads/stable/%{name}-%{name}-%{version}.tar.gz
+Source0:        https://github.com/FRRouting/frr/archive/refs/tags/%{name}-%{name}-%{version}.tar.gz
 
 %description
 FRRouting is a free software that manages TCP/IP based routing
@@ -55,20 +55,18 @@ Summary: python3 for frr
 %description python3
 Python3
 
-%pre
-echo 'new install'
-
 %prep
 %autosetup -p1
 
 ./bootstrap.sh
 
 # general defines
-%define     frr_libdir        {_libdir}
-%define     frr_bindir        {_bindir}
-%define     frr_sbindir       {_sbindir}
-%define     frr_datadir       {_datadir}
-%define     frr_includedir    {_includedir}
+%define     frr_libdir        %{_libdir}
+%define     frr_bindir        %{_bindir}
+%define     frr_sbindir       %{_sbindir}
+%define     frr_datadir       %{_datadir}
+%define     frr_yangdir       %{_prefix}/local/share/yang
+%define     frr_includedir    %{_includedir}
 
 sh ./configure --host=%{_host} --build=%{_build} \
     --bindir=%{_bindir} \
@@ -139,10 +137,10 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
+%{frr_yangdir}/*
 %{frr_bindir}/mtracebis
 %{frr_bindir}/vtysh
-%{frr_datadir}/yang/*
-%{frr_datadir}/info/frr.info
+%{_infodir}/frr.info.gz
 %{frr_libdir}/libfrr.so*
 %{frr_libdir}/libfrrcares*
 %{frr_libdir}/libfrrospf*
@@ -174,15 +172,15 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_sbindir}/zebra
 
 %files devel
-%{frr_includedir}/*.h
+%{frr_includedir}/frr/*.h
 %{frr_libdir}/lib*.so
 %{frr_datadir}/man/*
-%{_libdir}/modules/*.so
-%dir %{frr_includedir}/ospfapi
-%{frr_includedir}/ospfapi/*.h
-%{frr_includedir}/ospfd/*.h
-%{frr_includedir}/eigrpd/*.h
-%{frr_includedir}/bfdd/*.h
+%{_libdir}/frr/modules/*.so
+%dir %{frr_includedir}/frr/ospfapi
+%{frr_includedir}/frr/ospfapi/*.h
+%{frr_includedir}/frr/ospfd/*.h
+%{frr_includedir}/frr/eigrpd/*.h
+%{frr_includedir}/frr/bfdd/*.h
 %exclude %{_libdir}/debug
 
 %files pythontools
