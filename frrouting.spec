@@ -60,14 +60,6 @@ Python3
 
 ./bootstrap.sh
 
-# general defines
-%define     frr_libdir        %{_libdir}
-%define     frr_bindir        %{_bindir}
-%define     frr_sbindir       %{_sbindir}
-%define     frr_datadir       %{_datadir}
-%define     frr_yangdir       %{_prefix}/local/share/yang
-%define     frr_includedir    %{_includedir}
-
 sh ./configure --host=%{_host} --build=%{_build} \
     --prefix=%{_prefix} \
     --bindir=%{_bindir} \
@@ -137,59 +129,61 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %doc doc/mpls
 %doc README.md
 %{_unitdir}/frr.service
-%{frr_datadir}/*
-%{frr_bindir}/mtracebis
-%{frr_bindir}/vtysh
+%{_datadir}/*
+%{_bindir}/mtracebis
+%{_bindir}/vtysh
 %{_infodir}/frr.info.gz
-%{frr_libdir}/libfrr.so*
-%{frr_libdir}/libfrrcares*
-%{frr_libdir}/libfrrospf*
+%{_libdir}/libfrr.so*
+%{_libdir}/libfrrcares*
+%{_libdir}/libfrrospf*
 %{_libdir}/frr/modules/bgpd_bmp.so
 %exclude %{_libdir}/debug
-%{frr_sbindir}/ospfd
-%{frr_sbindir}/bgpd
-%{frr_sbindir}/frr-reload
-%{frr_sbindir}/frrcommon.sh
-%{frr_sbindir}/frrinit.sh
-%{frr_sbindir}/watchfrr.sh
-%{frr_sbindir}/babeld
-%{frr_sbindir}/eigrpd
-%{frr_sbindir}/fabricd
-%{frr_sbindir}/frr
-%{frr_sbindir}/isisd
-%{frr_sbindir}/nhrpd
-%{frr_sbindir}/bfdd
-%{frr_sbindir}/ospf6d
-%{frr_sbindir}/pathd
-%{frr_sbindir}/pbrd
-%{frr_sbindir}/pimd
-%{frr_sbindir}/ripd
-%{frr_sbindir}/ripngd
-%{frr_sbindir}/ssd
-%{frr_sbindir}/staticd
-%{frr_sbindir}/vrrpd
-%{frr_sbindir}/watchfrr
-%{frr_sbindir}/zebra
+%{_sbindir}/ospfd
+%{_sbindir}/bgpd
+%{_sbindir}/frr-reload
+%{_sbindir}/frrcommon.sh
+%{_sbindir}/frrinit.sh
+%{_sbindir}/watchfrr.sh
+%{_sbindir}/babeld
+%{_sbindir}/eigrpd
+%{_sbindir}/fabricd
+%{_sbindir}/frr
+%{_sbindir}/isisd
+%{_sbindir}/nhrpd
+%{_sbindir}/bfdd
+%{_sbindir}/ospf6d
+%{_sbindir}/pathd
+%{_sbindir}/pbrd
+%{_sbindir}/pimd
+%{_sbindir}/ripd
+%{_sbindir}/ripngd
+%{_sbindir}/ssd
+%{_sbindir}/staticd
+%{_sbindir}/vrrpd
+%{_sbindir}/watchfrr
+%{_sbindir}/zebra
 
 %files devel
-%{frr_includedir}/frr/*.h
-%{frr_libdir}/lib*.so
-%{frr_datadir}/man/*
+%{_includedir}/frr/*.h
+%{_libdir}/lib*.so
+%{_datadir}/man/*
 %{_libdir}/frr/modules/*.so
-%dir %{frr_includedir}/frr/ospfapi
-%{frr_includedir}/frr/ospfapi/*.h
-%{frr_includedir}/frr/ospfd/*.h
-%{frr_includedir}/frr/eigrpd/*.h
-%{frr_includedir}/frr/bfdd/*.h
+%dir %{_includedir}/frr/ospfapi
+%{_includedir}/frr/ospfapi/*.h
+%{_includedir}/frr/ospfd/*.h
+%{_includedir}/frr/eigrpd/*.h
+%{_includedir}/frr/bfdd/*.h
 %exclude %{_libdir}/debug
 
 %files pythontools
-%{frr_sbindir}/generate_support_bundle.py
-%{frr_sbindir}/frr-reload.py
-%{frr_sbindir}/frr_babeltrace.py
+%{_sbindir}/generate_support_bundle.py
+%{_sbindir}/frr-reload.py
+%{_sbindir}/frr_babeltrace.py
 %exclude %{_libdir}/debug
 
 %changelog
+*   Wed Apr 20 2022 Roye Eshed <eshedr@vmware.com> 8.2.2-2
+-   Removed the path defines and changed the folder defines in the configure portion
 *   Fri Apr 8 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
 -   General fixes including changing relative paths to absolute paths and adding commands for frr.service
 *   Wed Apr 6 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
