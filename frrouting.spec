@@ -23,32 +23,43 @@ BuildRequires:  texinfo
 BuildRequires:  libyang-devel
 BuildRequires:  elfutils-devel
 BuildRequires:  python3
+
 %if 0%{?with_check:1}
 BuildRequires:  python3-pytest
 %endif
+
 Vendor:         VMware, Inc.
 Distribution:   Photon
 Source0:        https://github.com/FRRouting/frr/archive/refs/tags/%{name}-%{version}.tar.gz
+
 %description
 FRRouting is a free software that manages TCP/IP based routing
 protocol. It takes multi-server and multi-thread approach to resolve
 the current complexity of the Internet.
+
 %package        devel
 Summary:        Header and development files for frrouting
 Requires: %{name} = %{version}-%{release}
 %description    devel
 It contains the libraries and header files to create applications
+
 %package pythontools
 Summary: python tools for frr
+
 %description pythontools
 Python Tools
+
 %package python3
 Summary: python3 for frr
+
 %description python3
 Python3
+
 %prep
 %autosetup -p1
+
 ./bootstrap.sh
+
 # general defines
 %define     frr_libdir        %{_libdir}
 %define     frr_bindir        %{_bindir}
@@ -56,6 +67,7 @@ Python3
 %define     frr_datadir       %{_datadir}
 %define     frr_yangdir       %{_prefix}/local/share/yang
 %define     frr_includedir    %{_includedir}
+
 sh ./configure --host=%{_host} --build=%{_build} \
     --bindir=%{_bindir} \
     --sbindir=%{_sbindir} \
@@ -79,35 +91,46 @@ sh ./configure --host=%{_host} --build=%{_build} \
     --enable-fpm \
     --enable-user=frr \
     --enable-vtysh=yes \
+
 %build
 make %{?_smp_mflags}
+
 %if 0%{?with_check:1}
 %check
 make check %{?_smp_mflags}
 %endif
+
 %install
 make DESTDIR=%{buildroot} install %{?_smp_mflags}
+
 # Remove debian init script if it was installed
 rm -f %{buildroot}%{frr_bindir}/frr
+
 # kill bogus libtool filesvoi
 rm -vf %{buildroot}%{_libdir}/frr/modules/*.la
 rm -vf %{buildroot}%{_libdir}/*.la
 rm -vf %{buildroot}%{_libdir}/frr/libyang_plugins/*.la
+
 # install /etc sources
 mkdir -p %{buildroot}%{_unitdir}
 install -m644 %{_builddir}/%{name}-%{version}/tools/frr.service %{buildroot}%{_unitdir}/frr.service
 install -p -m 755 tools/frrinit.sh %{_libexecdir}/frr
 install -p -m 755 tools/frrcommon.sh %{_libexecdir}/frrcommon.sh
 install -p -m 755 tools/watchfrr.sh %{_libexecdir}/watchfrr.sh
+
 # Delete libtool archives
 find %{buildroot} -type f -name "*.la" -delete -print
+
 %post
 /sbin/ldconfig
 %systemd_post frr.service
+
 %preun
 %systemd_preun frr.service
+
 %postun/sbin/ldconfig
 %systemd_postun_with_restart frr.service
+
 %files
 %doc COPYING
 %doc doc/mpls
@@ -146,6 +169,7 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_sbindir}/vrrpd
 %{frr_sbindir}/watchfrr
 %{frr_sbindir}/zebra
+
 %files devel
 %{frr_includedir}/frr/*.h
 %{frr_libdir}/lib*.so
@@ -157,11 +181,13 @@ find %{buildroot} -type f -name "*.la" -delete -print
 %{frr_includedir}/frr/eigrpd/*.h
 %{frr_includedir}/frr/bfdd/*.h
 %exclude %{_libdir}/debug
+
 %files pythontools
 %{frr_sbindir}/generate_support_bundle.py
 %{frr_sbindir}/frr-reload.py
 %{frr_sbindir}/frr_babeltrace.py
 %exclude %{_libdir}/debug
+
 %changelog
 *   Fri Apr 8 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
 -   General fixes including changing relative paths to absolute paths and adding commands for frr.service
