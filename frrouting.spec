@@ -183,7 +183,8 @@ find %{buildroot} -type f -name "*.la" -delete -print
 
 %changelog
 *   Wed Apr 20 2022 Roye Eshed <eshedr@vmware.com> 8.2.2-2
--   Removed the path defines and changed the folder defines in the configure portion
+-   Removed the path defines and changed the folder defines in the configure portion as well as
+-   changed build requirements and added python3 as a subpackage and some fixes to the configure.
 *   Fri Apr 8 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
 -   General fixes including changing relative paths to absolute paths and adding commands for frr.service
 *   Wed Apr 6 2022 Roye Eshed <eshedr@vmware.com> 8.2-1
