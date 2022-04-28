@@ -23,6 +23,7 @@ BuildRequires:  texinfo
 BuildRequires:  libyang-devel
 BuildRequires:  elfutils-devel
 BuildRequires:  python3
+BuildRequires:  pcre2-devel
 
 %if 0%{?with_check:1}
 BuildRequires:  python3-pytest
